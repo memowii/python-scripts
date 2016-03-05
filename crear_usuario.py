@@ -26,10 +26,14 @@ if respuesta == 's':
 		dir_esqueleto = raw_input()
 		print "\n¿Quiere que su usuario tenga permiso del shell? (s/n)",
 		perm_shell = raw_input()
-		print "Comentario del usuario:",
+		if perm_shell == "s":
+			dir_shell = "/bin/bash"
+		else:
+			dir_shell = "/bin/false"
+		print "\nComentario del usuario:",
 		comentario = raw_input()
 		print "\nNombre de grupo del usuario:",
-		nombre = raw_input()
+		nombre_grupo = raw_input()
 		print "\nNombre del usuario (nickname):",
 		usuario = raw_input()
 
@@ -37,8 +41,12 @@ if respuesta == 's':
 		# print "\nContraseña del usuario:",
 		# password = raw_input()
 
-		
-
+		sentencia_cli = "useradd -d "+dir_hogar+" -m -k "+dir_esqueleto+" -s "+dir_shell+" -c "+"'"+comentario+"'"+" -g "+nombre_grupo+" "+usuario
+		system(sentencia_cli)
+		print "\n El usuario ha sido creado, ahora debe ponerle una contraseña.\n"
+		sentencia_cli = 'passwd'+' '+usuario
+		system(sentencia_cli)
+		print "\nEl usuario ha sido creado."
 else:
 	print "\nPor favor ejecute este script en modo súper usuario (sudo)."
 	exit()
