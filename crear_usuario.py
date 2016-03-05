@@ -39,7 +39,7 @@ if respuesta == 's':
 	sentencia_cli = "useradd -d "+dir_hogar+" -m -k "+dir_esqueleto+" -s "+dir_shell+" -c "+"'"+comentario+"'"+" -g "+nombre_grupo+" "+usuario
 	system(sentencia_cli)
 	print "\nEl usuario ha sido creado, ahora debe ponerle una contraseña, vamos a 'testear' su contraseña."
-	print "\nLa contraseña debe tener 5 carácteres al menos, una letra mayúscula y un número."
+	print "La contraseña debe tener 5 carácteres al menos, una letra mayúscula y un número."
 	password = raw_input('\nIngrese contraseña: ')
 	while True:
 		if len(password) < 5:
