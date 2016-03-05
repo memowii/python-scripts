@@ -21,7 +21,7 @@ if respuesta == 's':
 	print "\nIngrese todos los datos correspodientes al nuevo usuario."
 	print "\nDirectorio del usuario:",
 	dir_hogar = raw_input()
-	print "\nDirectorio del esquelto:",
+	print "\nDirectorio del esqueleto:",
 	dir_esqueleto = raw_input()
 	print "\n¿Quiere que su usuario tenga permiso del shell? (s/n)",
 	perm_shell = raw_input()
@@ -36,13 +36,25 @@ if respuesta == 's':
 	print "\nNombre del usuario (nickname):",
 	usuario = raw_input()
 
-	# no estoy seguro
-	# print "\nContraseña del usuario:",
-	# password = raw_input()
-
 	sentencia_cli = "useradd -d "+dir_hogar+" -m -k "+dir_esqueleto+" -s "+dir_shell+" -c "+"'"+comentario+"'"+" -g "+nombre_grupo+" "+usuario
 	system(sentencia_cli)
-	print "\n El usuario ha sido creado, ahora debe ponerle una contraseña.\n"
+	print "\nEl usuario ha sido creado, ahora debe ponerle una contraseña, vamos a 'testear' su contraseña."
+	print "\nLa contraseña debe tener 5 carácteres al menos, una letra mayúscula y un número."
+	password = raw_input('\nIngrese contraseña: ')
+	while True:
+		if len(password) < 5:
+			print "\nLa contraseña es muy corta, esta debe contener al menos 5 carácteres."
+		elif not any(char.isupper() for char in password):
+			print "\nLa contraseña debe tener al menos una letra mayúscula."
+		elif not any(char.isdigit() for char in password):
+			print "\nLa contraseña debe tener al menos un número."
+		else:
+			break
+		password = raw_input('\nIngrese contraseña: ')
+	print "\nLa contraseña introducida cumple con nuestros estándares."
+	print "Ahora la asignaremos al nuevo usuario. Llamaremos a un comando externo"
+	print "de linux para que usted vuelva a ingresar la contraseña que acaba"
+	print "de crear.\n"
 	sentencia_cli = 'passwd'+' '+usuario
 	system(sentencia_cli)
 	print "\nEl usuario ha sido creado."
