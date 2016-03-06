@@ -58,6 +58,23 @@ if respuesta == 's':
 	sentencia_cli = 'passwd'+' '+usuario
 	system(sentencia_cli)
 	print "\nEl usuario "+usuario+" ha sido creado."
+	print "\n¿Desea crear una cuota para el usuario creado? (s/n)"
+	respuesta = raw_input()
+	if respuesta == 's':
+		print "\nIngrese la cantidad del soft (en bytes):",
+		soft = raw_input()
+		print "\nIngrese la cantidad del hard (en bytes):",
+		hard = raw_input()
+		sentencia_cli = "setquota -u "+usuario+" "+soft+" "+hard+" 10000 10000  -a /dev/loop0"
+		system(sentencia_cli)
+		print "\nLa cuota del usuario "+usuario+" fue creada."
+	print "\n¿Quiere que su usuario tenga privilegios de sudo? (s/n)"
+	respuesta = raw_input()
+	if respuesta == 's':
+		sentencia_cli = "sudo adduser "+usuario+" sudo"
+		system(sentencia_cli)
+		print "\nEl usuario "+usuario+" tiene privilegios de sudo."
+	print "\nTodas las configuraciones del usuario "+usuario+" han finalizado."
 else:
 	print "\nPor favor ejecute este script en modo súper usuario (sudo)."
 	exit()

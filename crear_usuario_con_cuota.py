@@ -57,7 +57,7 @@ if respuesta == 's':
 	print "de crear.\n"
 	sentencia_cli = 'passwd'+' '+usuario
 	system(sentencia_cli)
-	print "\nEl usuario ha sido creado."
+	print "\nEl usuario "+usuario+" ha sido creado."
 	print "\n¿Desea crear una cuota para el usuario creado? (s/n)"
 	respuesta = raw_input()
 	if respuesta == 's':
@@ -68,6 +68,7 @@ if respuesta == 's':
 		sentencia_cli = "setquota -u "+usuario+" "+soft+" "+hard+" 10000 10000  -a /dev/loop0"
 		system(sentencia_cli)
 		print "\nLa cuota del usuario "+usuario+" fue creada."
+	print "\nTodas las configuraciones del usuario "+usuario+" han finalizado."
 else:
 	print "\nPor favor ejecute este script en modo súper usuario (sudo)."
 	exit()
