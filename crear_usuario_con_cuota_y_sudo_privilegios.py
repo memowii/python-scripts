@@ -65,7 +65,7 @@ if respuesta == 's':
 		soft = raw_input()
 		print "\nIngrese la cantidad del hard (en bytes):",
 		hard = raw_input()
-		sentencia_cli = "setquota -u "+usuario+" "+soft+" "+hard+" 10000 10000  -a /dev/loop0"
+		sentencia_cli = "setquota -u "+usuario+" "+soft+" "+hard+" 10000 10000  -a /dev/sda1"
 		system(sentencia_cli)
 		print "\nLa cuota del usuario "+usuario+" fue creada."
 	print "\n¿Quiere que su usuario tenga privilegios de sudo? (s/n)"
