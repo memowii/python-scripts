@@ -35,4 +35,5 @@ else:
 	print "\nSe llamará a un comando externo de Linux para que realize la"
 	print "configuración."
 	setencia_cli = "dhclient -v "+interfaz
-	print "La configuración dinámica ha sido terminada."
+	system(setencia_cli)
+	print "\nLa configuración dinámica ha sido terminada."
