@@ -1,9 +1,8 @@
-import argparse
 import socket
-
+from argparse import ArgumentParser
 from subprocess import run
 
-parser = argparse.ArgumentParser(description="set up an apache2 virtual host for Ubuntu 14 and 16")
+parser = ArgumentParser(description="set up an apache2 virtual host for Ubuntu 14 and 16")
 parser.add_argument("host", help="URL of the host, e.g., test.dev")
 parser.add_argument("user", help="owner-user of the created project directory")
 parser.add_argument("group", nargs='?',
