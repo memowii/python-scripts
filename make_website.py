@@ -1,6 +1,8 @@
 import socket
 from argparse import ArgumentParser
 from subprocess import run
+from subprocess import DEVNULL
+from sys import exit
 
 parser = ArgumentParser(description="set up an apache2 virtual host for Ubuntu 14 and 16")
 parser.add_argument("host", help="URL of the host, e.g., test.dev")
@@ -15,7 +17,11 @@ host = args.host
 user = args.user
 group = args.group
 
-run(['mkdir', '-p', '/var/www/' + host])
+completed_process = run(['mkdir', '/var/www/' + host], stderr=DEVNULL)
+
+if completed_process.returncode:
+    exit("{0} cannot create directory '/var/www/{1}' already exists: enter a different host name".format(parser.prog,
+                                                                                                         host))
 
 create_directory_project_command = 'chown -R {0}:{0} /var/www/{1}'.format(user, host)
 
@@ -71,4 +77,4 @@ ip = (([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.
     [(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in
      [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0]
 
-run(["sed -i '1i{0} {1}\n # Added by script {2}' /etc/hosts".format(ip, host, parser.prog)], shell=True)
+run(["sed -i '1i{0} {1} # Added by script {2}\n' /etc/hosts".format(ip, host, parser.prog)], shell=True)
