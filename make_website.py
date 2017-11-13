@@ -29,24 +29,39 @@ def get_ip():
          [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0]
 
 
+def write_to_file(file_path, mode, data):
+    if mode == 'w':
+        with open(file_path, 'w') as file:
+            run(['echo', "'{}'".format(data)], stdout=file)
+    elif mode == 'p':
+        with open(file_path, 'r+') as file:
+            print()
+
+
+def create_file(file_path, data):
+    with open(file_path, 'w') as file:
+        run(['echo', data], stdout=file)
+
+
 def create_virtual_host(args):
     host = args.host
     user = args.user
     group = args.group
     exec_script_path = realpath(expanduser(__file__))
+    ip = get_ip()
 
     completed_process = run(['mkdir', '/var/www/' + host], stderr=DEVNULL)
 
     if completed_process.returncode:
-        exit("{0} cannot create directory '/var/www/{1}' already exists: enter a different host name".format(
+        exit("{} cannot create directory '/var/www/{}' already exists: enter a different host name".format(
             exec_script_path, host))
 
-    create_directory_project_command = 'chown -R {0}:{0} /var/www/{1}'.format(user, host)
+    create_directory_project_command = ['chown', '-R', '{0}:{0}'.format(user), '/var/www/{}'.format(host)]
 
     if group:
-        create_directory_project_command = create_directory_project_command.replace(':' + user, ':' + group)
+        create_directory_project_command[2] = create_directory_project_command[2].replace(':' + user, ':' + group)
 
-    run([create_directory_project_command], shell=True)
+    run(create_directory_project_command)
 
     if args.example_index:
         example_index = """
@@ -59,7 +74,7 @@ def create_virtual_host(args):
  </body>
 </html>
     """
-        run(['echo "' + example_index + '" > /var/www/' + host + '/index.php'], shell=True)
+        create_file('/var/www/{}/index.php'.format(host), example_index)
 
     conf_content = """
 <VirtualHost *:80>
@@ -85,15 +100,13 @@ def create_virtual_host(args):
 {1}
     """.format(host, conf_content)
 
-    run(['echo "' + conf_content + '" > /etc/apache2/sites-available/' + host + '.conf'], shell=True)
+    create_file('/etc/apache2/sites-available/{}.conf'.format(host), conf_content)
 
-    run(['a2ensite', host + '.conf'], stdout=DEVNULL)
+    run(['a2ensite', '{}.conf'.format(host)], stdout=DEVNULL)
 
-    run(['service apache2 restart'], shell=True)
+    run(['service', 'apache2', 'restart'])
 
-    ip = get_ip()
-
-    run(["sed -i '1i{0} {1} # Added by script {2}\n' /etc/hosts".format(ip, host, exec_script_path)], shell=True)
+    run(['sed', '-i', '1i{0} {1} # Added by script {2}\n'.format(ip, host, exec_script_path), '/etc/hosts'])
 
     print('host {} has been created'.format(host))
 
