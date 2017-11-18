@@ -29,15 +29,6 @@ def get_ip():
          [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0]
 
 
-def write_to_file(file_path, mode, data):
-    if mode == 'w':
-        with open(file_path, 'w') as file:
-            run(['echo', "'{}'".format(data)], stdout=file)
-    elif mode == 'p':
-        with open(file_path, 'r+') as file:
-            print()
-
-
 def create_file(file_path, data):
     with open(file_path, 'w') as file:
         run(['echo', data], stdout=file)
