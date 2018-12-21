@@ -1,0 +1,4 @@
+* destruir un sitio O VARIOS SITIOS creado por esa utilidad -> sudo python3 make_website.py -d test6.dev test7.dev
+* renombrar un sitio|host
+* crear varias hosts al mismo tiempo
+* crearlo via ssh
