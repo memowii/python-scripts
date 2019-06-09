@@ -7,6 +7,8 @@ import re
 import datetime
 
 class PlatziClass:
+    PYTHON_PARSER = 'html.parser'
+    RESPONSE_OK = 200
 
     def __init__(self, url):
         self.url = url
@@ -14,16 +16,16 @@ class PlatziClass:
 
     def get_response(self):
         response = requests.get(self.url)
-        if response.status_code == 200:
+        if response.status_code == PlatziClass.RESPONSE_OK:
             return response
         else:
             raise Exception('An error occurred when making the resquest. Status code {}.'.format(response.status_code))
 
     def get_soup(self):
         response = self.get_response()
-        return BeautifulSoup(response.text, 'html.parser')
+        return BeautifulSoup(response.text, PlatziClass.PYTHON_PARSER)
 
-    def get_class_title(self):
+    def get_title(self):
         course_banner_title = self.soup.select('.CourseBanner-title')[0]
         return course_banner_title.span.text
 
@@ -31,7 +33,7 @@ class PlatziClass:
         modules = self.soup.select('.Concept')
         return list(map(lambda module: PlatziModule(module), modules))
 
-    def get_class_duration(self):
+    def get_duration(self):
         total_duration = 0
         modules = self.get_modules()
         for module in modules:
@@ -40,8 +42,8 @@ class PlatziClass:
                 total_duration += lesson.get_duration()
         return total_duration
 
-    def get_formated_class_duration(self):
-        class_duration = self.get_class_duration()
+    def get_formated_duration(self):
+        class_duration = self.get_duration()
         return str(datetime.timedelta(minutes=class_duration))
 
 
@@ -83,4 +85,4 @@ class PlatziLesson:
 
 
 platzi_clase = PlatziClass('https://platzi.com/clases/bash-shell/')
-print(platzi_clase.get_formated_class_duration())
+print(platzi_clase.get_formated_duration())
