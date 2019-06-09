@@ -62,12 +62,13 @@ class PlatziModule:
 
 class PlatziLesson:
     MINUTES_PATTERN = '(\d+):(\d+)'
+    HOST_NAME = 'https://platzi.com'
 
     def __init__(self, soup_lesson):
         self.lesson = soup_lesson
 
     def get_link(self):
-        return self.lesson.a['href']
+        return PlatziLesson.HOST_NAME + self.lesson.a['href']
 
     def get_title(self):
         return self.lesson \
@@ -83,6 +84,63 @@ class PlatziLesson:
         return int(text_minutes)
 
 
+class Markdown:
+    
+    def h1(text, toc=False):
+        return '# {}{}'.format(text, ' <!-- omit in toc -->' if toc else '')
 
-platzi_clase = PlatziClass('https://platzi.com/clases/bash-shell/')
-print(platzi_clase.get_formated_duration())
+    def h2(text, toc=False):
+        return '## {}{}'.format(text, ' <!-- omit in toc -->' if toc else '')
+
+    def h3(text, toc=False):
+        return '### {}{}'.format(text, ' <!-- omit in toc -->' if toc else '')
+
+    def h4(text, toc=False):
+        return '#### {}{}'.format(text, ' <!-- omit in toc -->' if toc else '')
+
+    def hr():
+        return '---'
+
+    def link(text, href):
+        return '[{}]({})'.format(text, href)
+
+# print(Markdown.h1('Curso de Programación en Bash Shell'))
+# print(Markdown.link("I'm an inline-style link", 'https://www.google.com'))
+# print(Markdown.h1(Markdown.link('Introducción a Terminal y Línea de Comandos', 'https://platzi.com/clases/bash-shell/')))
+
+class Readme:
+    FILE_NAME = 'readme.md'
+    FILE_MODE_W = 'w'
+
+    def __init__(self, course_url):
+        self.course_url = course_url
+        self.platzi_class = PlatziClass(self.course_url)
+
+    def create_readme(self):
+        file = open(Readme.FILE_NAME, Readme.FILE_MODE_W)
+        
+        link_class_title = Markdown.link(self.platzi_class.get_title(), self.platzi_class.url)
+        class_title = Markdown.h1(link_class_title)
+        file.write(class_title)
+        file.write('\n\n')
+
+        modules = self.platzi_class.get_modules()
+        for module in modules:
+            module_title = Markdown.h2(module.get_title())
+            file.write(module_title)
+            file.write('\n\n')
+
+            lessons = module.get_lessons()
+            for lesson in lessons:
+                link_lesson_title = Markdown.link(lesson.get_title(), lesson.get_link())
+                lesson_title = Markdown.h3(link_lesson_title)
+                file.write(link_lesson_title)
+                file.write('\n\n\n\n')
+                file.write(Markdown.hr())
+                file.write('\n\n')
+        file.write(Markdown.h4('Resources:', True))
+        file.close()
+        
+
+readme = Readme('https://platzi.com/clases/bash-shell/')
+readme.create_readme()
