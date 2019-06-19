@@ -249,3 +249,5 @@ main()
 # hacer que reciva un path para guardar el readme
 # hacer que reciva un nombre de archivo para el readme
 # compartir en platzi, de algún modo
+# checar caracter '?'
+# checar caracter '!'
