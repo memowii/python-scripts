@@ -1,10 +1,9 @@
 import requests
-import urllib.request
-import time
 from bs4 import BeautifulSoup
-
-import re
 import datetime
+import argparse
+import re
+from urllib.parse import urlparse
 
 
 class PlatziClass:
@@ -216,7 +215,36 @@ class Readme:
                 index += Readme.NEW_LINE_CHAR
         index += Readme.NEW_LINE_CHAR
         return index
-        
 
-readme = Readme('https://platzi.com/clases/bash-shell/')
-readme.create_readme()
+
+def is_valid_url(url):
+    parse_result = urlparse(url)
+    return bool(parse_result.scheme) and bool(parse_result.netloc)
+
+
+def is_platzi_class(path):
+    match_object = re.search('^/clases/.*?/', path)
+    return len(match_object.group(0)) == len(path)
+
+
+def is_platzi_url(url):
+    if is_valid_url(url):
+        parse_result = urlparse(url)
+        return parse_result.netloc == 'platzi.com' and is_platzi_class(parse_result.path)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Receives a Platzi course url and creates a readme with its respective modules and lessons.")
+    parser.add_argument('URL', help='URL used to fetch the information of a Platzi course.')
+    args = parser.parse_args()
+    if is_platzi_url(args.URL):
+        readme = Readme(args.URL)
+        readme.create_readme()
+    else:
+        print('The URL is not a URL from a Platzi course.')
+
+
+main()
+
+# hacer que reciva un path para guardar el readme
+# hacer que reciva un nombre de archivo para el readme
