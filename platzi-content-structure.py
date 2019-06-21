@@ -4,6 +4,7 @@ import datetime
 import argparse
 import re
 from urllib.parse import urlparse
+import os
 
 
 class PlatziClass:
@@ -160,12 +161,26 @@ class Readme:
     INDEX_INDENTATION_LEVEL_2 = '  - '
     INDEX_INDENTATION_LEVEL_3 = '    + '
 
-    def __init__(self, course_url):
+    def __init__(self, course_url, name=None):
         self.course_url = course_url
         self.platzi_class = PlatziClass(self.course_url)
+        self.name = name
+
+    def get_file_name(self):
+        if self.name:
+            return self.name
+
+        return Readme.FILE_NAME
+
+    def validate_file_name(self, file_name):
+        if os.path.isfile(file_name):
+            print('Error: a file with that name already exists.')
+            exit(1)
 
     def create_readme(self):
-        file = open(Readme.FILE_NAME, Readme.FILE_MODE_W)
+        file_name = self.get_file_name()
+        self.validate_file_name(file_name)
+        file = open(file_name, Readme.FILE_MODE_W)
 
         link_class_title = Markdown.link(self.platzi_class.get_title(),
                                          self.platzi_class.url)
@@ -236,9 +251,11 @@ def is_platzi_url(url):
 def main():
     parser = argparse.ArgumentParser(description="Receives a Platzi course url and creates a readme with its respective modules and lessons.")
     parser.add_argument('URL', help='URL used to fetch the information of a Platzi course.')
+    parser.add_argument('--name', help='Choose the name of the .md file.')
+    # parser.add_argument("--path", help="Choose in what directory to put the file.")
     args = parser.parse_args()
     if is_platzi_url(args.URL):
-        readme = Readme(args.URL)
+        readme = Readme(args.URL, args.name)
         readme.create_readme()
     else:
         print('The URL is not a URL from a Platzi course.')
